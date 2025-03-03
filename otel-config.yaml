@@ -1,0 +1,21 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317" # back-end
+      http:
+        endpoint: "0.0.0.0:4318" # front-end
+
+exporters:
+  logging:
+    verbosity: detailed
+  otlp:
+    endpoint: "http://jaeger:4317"
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging, otlp]
