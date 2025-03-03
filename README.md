@@ -1,5 +1,9 @@
 # Roman Numeral Converter
 
+This web application provides a web interface, which could convert a given Arabic Numeral within [1, 3999], into [Roman Numeral](https://en.wikipedia.org/wiki/Roman_numerals). 
+
+Roman numerals are a numeral system based on combinations of letters from the Latin alphabet: I, V, X, L, C, D, and M, where each letter represents a specific value (1, 5, 10, 50, 100, 500, and 1000). Numbers are formed by combining these letters, following additive and subtractive rules (e.g., II = 2, IV = 4, IX = 9, XIII = 13, XL = 40, C = 100, M = 1000).
+
 ## Using
 
 ### Run with Docker
