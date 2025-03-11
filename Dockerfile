@@ -3,9 +3,9 @@ WORKDIR /
 COPY package.json package-lock.json ./
 RUN npm install
 RUN npm install -g tsx
-COPY / ./
+COPY . .
 RUN npm run front-end-only-build
-COPY /dist ./dist
+COPY dist ./dist
 EXPOSE 8080
 CMD npx tsx src/server.ts
 
