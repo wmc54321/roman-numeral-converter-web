@@ -1,4 +1,4 @@
-import { AppError } from "./error-utils";
+import { InputError, INPUT_ERROR_KEY } from "./error-utils";
 
 const DECREASING_INT_TO_ROMAN_PAIRS: [number, string][] = [
   [1000, "M"],
@@ -16,32 +16,48 @@ const DECREASING_INT_TO_ROMAN_PAIRS: [number, string][] = [
   [1, "I"],
 ];
 
-export function convertToRomanNumeral(rawStr: string, errorLoggingEventPrefix?: string): string {
-  // check if the input is in format of "Arabic numeral".
-  if (!rawStr || isNaN(Number(rawStr))) {
-    throw new AppError(
-      400,
-      errorLoggingEventPrefix + '.invalid_input',
-      "Input is not a valid Arabic numeral."
+
+export function convertToRomanNumeral(rawOptStr: string | null, errorLoggingEventPrefix?: string): string {
+  const errorLoggingEventForInvalidInput = errorLoggingEventPrefix + '.invalid_input'
+
+  const rawOptStrTrim = rawOptStr != null ? rawOptStr.trim() : null;
+  if (rawOptStrTrim == null || rawOptStrTrim === '') {
+    throw new InputError(
+      INPUT_ERROR_KEY.EMPTY_INPUT,
+      errorLoggingEventForInvalidInput,
     );
   }
 
-  const rawNumber = Number(rawStr);
+  // Number(null), Number(""), and Number("   ") will get 0 - which should have been filtered out above.
+  const rawNumber = Number(rawOptStrTrim);
+  if (Number.isNaN(rawNumber)) {
+    throw new InputError(
+      INPUT_ERROR_KEY.NOT_A_NUMBER,
+      errorLoggingEventForInvalidInput,
+    );
+  }
+
   // check if the input is an integer.
   if (!Number.isInteger(rawNumber)) {
-    throw new AppError(
-      400,
-      errorLoggingEventPrefix + '.invalid_input',
-      "Input is not an integer."
+    throw new InputError(
+      INPUT_ERROR_KEY.NOT_AN_INTEGER,
+      errorLoggingEventForInvalidInput,
     );
   }
 
-  // check if the input is within [1, 3999]
-  if (rawNumber < 1 || rawNumber > 3999) {
-    throw new AppError(
-      400,
-      errorLoggingEventPrefix + '.invalid_input',
-      "Input is not within [1, 3999]."
+  // check if the input is within [1, 3999] - negative or zero
+  if (rawNumber <= 0) {
+    throw new InputError(
+      INPUT_ERROR_KEY.NEGATIVE_OR_ZERO,
+      errorLoggingEventForInvalidInput,
+    );
+  }
+
+  // check if the input is within [1, 3999] - out of range
+  if (rawNumber > 3999) {
+    throw new InputError(
+      INPUT_ERROR_KEY.EXCEEDS_SUPPORTED_RANGE,
+      errorLoggingEventForInvalidInput,
     );
   }
 

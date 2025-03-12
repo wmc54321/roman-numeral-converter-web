@@ -34,17 +34,17 @@ app.use(pinoHttp({ logger })); // track HTTP requests on server APIs
 
 // handle requests for roman numeral.
 app.get('/romannumeral', (req, res, next): void => {
-  logger.info({
-    event: 'romannumeral.request.start',
-    method: req.method,
-    url: req.url,
-    ip: req.ip,
-  })
-  const queryParamStr = String(req.query.query);
-
   try {
-    const romanNumeral = ServerUtils.convertToRomanNumeral(queryParamStr, 'romannumeral.request.end.error');
-    const response = { input: queryParamStr, output: romanNumeral };
+    logger.info({
+      event: 'romannumeral.request.start',
+      method: req.method,
+      url: req.url,
+      ip: req.ip,
+    })
+    const queryParamOptStr = req.query.query != null ? String(req.query.query) : null;
+
+    const romanNumeral = ServerUtils.convertToRomanNumeral(queryParamOptStr, 'romannumeral.request.end.error');
+    const response = { input: queryParamOptStr, output: romanNumeral };
     res.json(response);
     logger.info({
       event: 'romannumeral.request.end.success',
