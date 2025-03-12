@@ -1,4 +1,4 @@
-import {AppError} from "./error-utils.ts";
+import { AppError } from "./error-utils";
 
 const DECREASING_INT_TO_ROMAN_PAIRS: [number, string][] = [
   [1000, "M"],

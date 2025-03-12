@@ -1,4 +1,4 @@
-import * as ServerUtils from './server-utils.ts';
+import * as ServerUtils from './server-utils';
 
 describe('Test convertToRomanNumeral function', () => {
   it('should throw errors for invalid inputs', () => {
