@@ -7,6 +7,7 @@ import pinoHttp from "pino-http";
 import fs from "fs";
 import path from "path";
 import * as ServerUtils from './server-utils.ts';
+import { getErrorHandlerWithLogger } from "./error-utils.ts";
 
 dotenv.config();
 
@@ -31,9 +32,8 @@ app.use(cors({
 app.use(express.json());
 app.use(pinoHttp({ logger })); // track HTTP requests on server APIs
 
-
 // handle requests for roman numeral.
-app.get('/romannumeral', (req, res): void => {
+app.get('/romannumeral', (req, res, next): void => {
   logger.info({
     event: 'romannumeral.request.start',
     method: req.method,
@@ -43,7 +43,7 @@ app.get('/romannumeral', (req, res): void => {
   const queryParamStr = String(req.query.query);
 
   try {
-    const romanNumeral = ServerUtils.convertToRomanNumeral(queryParamStr);
+    const romanNumeral = ServerUtils.convertToRomanNumeral(queryParamStr, 'romannumeral.request.end.error');
     const response = { input: queryParamStr, output: romanNumeral };
     res.json(response);
     logger.info({
@@ -54,19 +54,12 @@ app.get('/romannumeral', (req, res): void => {
       ip: req.ip,
     })
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    const response = { error: errorMessage };
-    res.status(400).json(response);
-    logger.info({ // promClient side error, no need to use error level.
-      event: 'romannumeral.request.end.error',
-      response,
-      method: req.method,
-      url: req.url,
-      ip: req.ip,
-    })
+    next(error);
   }
 })
 
+// error handling middleware
+app.use(getErrorHandlerWithLogger(logger));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
