@@ -48,11 +48,13 @@ Note on **Font**: Since the font used for Adobe Spectrum, Adobe Clean, is a rest
 
 **Back-end and API**: The back-end API is provided by Express.js in file `server.ts`. 
 
-**Error Handling**: The API romannumeral could accept a query with string of integer, and will responed with either the corresponding result of Roman numeral, or the error message in 400 status if the query string is not a valid input.
+**Error Handling**: The API romannumeral could accept a query with string of integer, and will responed with either the corresponding result of Roman numeral, or the error message in 400 status if the query string is not a valid input. The error handling middleware is in `error-utils.ts`, which wraps the `Error` object into a class `InputError` with an HTTP status code with 4xx, based on the input error type.
 
 **CORS**: CORS is added for dev environment, as front-end of vite will run on port 5173, and back-end runs on port 8080. It's not needed in the production (as front-end files are built) for the query, however it's needed for the Observability APIs.
 
 **Unit Test**: The function convertToRomanNumeral in `server-utils.ts` is the core function we care. Added a unit test through Jest. Running cmd `jest` would trigger a test run.
+
+**Integration Test** The file `server.test.ts` will test the status code and response messages of the API endpoint. Running cmd `jest` would trigger a test run. In addtion, all the Observability related stuffs will not run when it's triggered from jest.
 
 ### Observability
 
