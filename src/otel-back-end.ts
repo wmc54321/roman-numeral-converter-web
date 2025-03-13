@@ -6,19 +6,24 @@ import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 
-const provider = new NodeTracerProvider();
-// traces through otel collector
-const exporter = new OTLPTraceExporter({
-  url: 'http://localhost:4317', // OpenTelemetry Collector gRPC endpoint
-});
-provider.addSpanProcessor(new BatchSpanProcessor(exporter));
-// export traces to console
-provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-provider.register();
+// check if it's jest test run
+const IS_JEST_RUN = !!process.env.JEST_WORKER_ID;
 
-// 监听 HTTP 和 Express
-registerInstrumentations({
-  instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
-});
+if (!IS_JEST_RUN) {
+  const provider = new NodeTracerProvider();
+  // traces through otel collector
+  const exporter = new OTLPTraceExporter({
+    url: 'http://localhost:4317', // OpenTelemetry Collector gRPC endpoint
+  });
+  provider.addSpanProcessor(new BatchSpanProcessor(exporter));
+  // export traces to console
+  provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+  provider.register();
 
-console.log("Init OpenTelemetry Tracing backend");
+  // Listen HTTP & Express
+  registerInstrumentations({
+    instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
+  });
+
+  console.log("Init OpenTelemetry Tracing backend");
+}

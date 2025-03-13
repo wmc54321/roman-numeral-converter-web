@@ -1,5 +1,5 @@
-import {convertToRomanNumeral} from './server-utils';
-import {INPUT_ERROR_KEY, INPUT_ERROR_MESSAGES, INPUT_ERROR_STATUS_CODE, InputError} from "./error-utils";
+import { convertToRomanNumeral } from '../server-utils';
+import { INPUT_ERROR_KEY, INPUT_ERROR_MESSAGES, INPUT_ERROR_STATUS_CODE, InputError } from "../error-utils";
 
 const INVALID_CASES: [string | null, INPUT_ERROR_KEY][] = [
   [null,          INPUT_ERROR_KEY.EMPTY_INPUT],
@@ -49,11 +49,11 @@ function assertInvalidCase(value: string | null, expectedErrorKey: INPUT_ERROR_K
 }
 
 describe('Test convertToRomanNumeral function', () => {
-  it.each(INVALID_CASES)(
+  test.each(INVALID_CASES)(
     "an invalid input %s should throw an error of %s",
     assertInvalidCase,
   );
-  it.each(VALID_CASES)(
+  test.each(VALID_CASES)(
     "an valid input %s should return %s",
     (value, expectedResult) => expect(convertToRomanNumeral(value)).toBe(expectedResult),
   )
